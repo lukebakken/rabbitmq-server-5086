@@ -6,17 +6,6 @@ set -o pipefail
 
 readonly dir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
-function cleanup
-{
-    set +o errexit
-    killall -9 epmd
-    killall -9 beam.smp
-    rm -rf /tmp/rabbitmq-test-instances/
-    set -o errexit
-}
-
-# trap cleanup EXIT
-
 git submodule update --init
 
 make -C "$dir/rabbitmq-perf-test"
