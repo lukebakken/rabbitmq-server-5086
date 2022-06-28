@@ -7,11 +7,9 @@ set -o pipefail
 # shellcheck disable=SC2155
 readonly dir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
-git submodule update --init
-
 function set_erlang_version
 {
-    asdf local erlang 24.3.4 && asdf local elixir 1.12.3-otp-24
+    asdf local erlang latest && asdf local elixir latest
     asdf current
     echo 'ERLANG VERSION:'
     erl -noinput -eval 'F=filename:join([code:root_dir(), "releases", erlang:system_info(otp_release), "OTP_VERSION"]),io:format("~p~n",[
