@@ -7,6 +7,15 @@ set -o pipefail
 # shellcheck disable=SC2155
 readonly dir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
+# Defaults for start-cluster:
+# TMPDIR ?= /tmp
+# TEST_TMPDIR ?= $(TMPDIR)/rabbitmq-test-instances
+readonly test_tmpdir="$HOME/tmp/rabbitmq-test-instances"
+
+mkdir -p "$test_tmpdir"
+
+git submodule update --init
+
 function set_erlang_version
 {
     asdf local erlang latest && asdf local elixir latest
@@ -34,7 +43,7 @@ wait
 
     set_erlang_version
 
-    make RABBITMQ_CONFIG_FILE="$dir/rabbitmq.conf" PLUGINS='rabbitmq_management rabbitmq_top' NODES=3 start-cluster
+    make TEST_TMPDIR="$test_tmpdir" RABBITMQ_CONFIG_FILE="$dir/rabbitmq.conf" PLUGINS='rabbitmq_management rabbitmq_top' NODES=3 start-cluster
 
     ./sbin/rabbitmqctl --node rabbit-1 set_policy --apply-to queues \
         --priority 0 policy-0 ".*" '{"ha-mode":"all", "ha-sync-mode": "automatic", "queue-mode": "lazy"}'
